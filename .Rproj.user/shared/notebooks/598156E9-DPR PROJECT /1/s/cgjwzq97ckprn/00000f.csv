@@ -1,0 +1,8 @@
+"0"," df <- whoAQ_data %>%"
+"0","  mutate("
+"0","    country_name = as.character(country_name),"
+"0","    year    = as.integer(year),"
+"0","    pm25_concentration    = as.numeric(pm25_concentration),"
+"0","    pm10_concentration    = as.numeric(pm10_concentration),"
+"0","    no2_concentration     = as.numeric(no2_concentration)"
+"0","  )"

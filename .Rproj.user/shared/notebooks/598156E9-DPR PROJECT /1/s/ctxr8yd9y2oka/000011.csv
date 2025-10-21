@@ -1,0 +1,2 @@
+"0","whoAQ_data$country_name <- gsub(""T√ºrkiye"", ""Turkiye"", whoAQ_data$country_name)"
+"0",""

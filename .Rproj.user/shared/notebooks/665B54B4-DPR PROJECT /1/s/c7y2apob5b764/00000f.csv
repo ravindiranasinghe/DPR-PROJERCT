@@ -1,0 +1,5 @@
+"0","prop_missing <- colSums(is.na(whoAQ_data))/nrow(whoAQ_data)"
+"0",""
+"0","data_clean <- whoAQ_data[, prop_missing <= 0.5]"
+"0",""
+"0",""

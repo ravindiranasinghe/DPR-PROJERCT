@@ -1,0 +1,6 @@
+"0",""
+"0",""
+"0","df <- country_name %>%"
+"0","  mutate(continent = countrycode(country_name, ""country_name"", ""continent""))"
+"2","Error: object 'country_name' not found
+"

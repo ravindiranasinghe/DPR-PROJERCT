@@ -1,0 +1,9 @@
+"0","countries <- c(""Sri Lanka"",""Germany"",""South Africa"","
+"0","               ""United States of America"",""Brazil"",""Australia"")"
+"0",""
+"0","df_sel <- whoAQ %>%"
+"0","  filter(country_name %in% countries) %>%"
+"0","  drop_na(pm25_concentration,pm10_concentration)  "
+"2","Error in drop_na(., pm25_concentration, pm10_concentration) : 
+  could not find function ""drop_na""
+"

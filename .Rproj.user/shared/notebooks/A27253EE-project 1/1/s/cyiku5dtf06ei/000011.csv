@@ -1,0 +1,6 @@
+"0","  selected_columns<-whoAQ %>%"
+"0","  select(country_name, city, year, pm25_concentration, pm10_concentration"
+"0",",no2_concentration , latitude, longitude)"
+"2","Error in UseMethod(""select"") : 
+  no applicable method for 'select' applied to an object of class ""function""
+"

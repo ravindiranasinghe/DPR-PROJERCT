@@ -1,0 +1,1 @@
+{"frames":[{"func":"whoAQ %>% filter(country_name %in% countries) %>% drop_na(pm25_concentration, \n    pm10_concentration)","file":"","line_number":0,"end_line_number":0,"character_number":0,"end_character_number":0}],"message":"Error in drop_na(., pm25_concentration, pm10_concentration) : \n  could not find function \"drop_na\"\n"}

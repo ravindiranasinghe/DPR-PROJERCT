@@ -1,0 +1,5 @@
+"0",""
+"0",""
+"0","whoAQ_data <- whoAQ_data %>%"
+"0","  mutate(continent = countrycode(country_name, ""country.name"", ""continent""))"
+"0",""

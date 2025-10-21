@@ -1,0 +1,21 @@
+"1","
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuKGRmKVxuYGBgIn0= -->
+
+```r
+(df)
+```
+
+<!-- rnb-source-end -->
+"
+"0","```r
+(df)
+```"
+"1","function (x, df1, df2, ncp, log = FALSE) 
+{
+    if (missing(ncp)) 
+        .Call(C_df, x, df1, df2, log)
+    else .Call(C_dnf, x, df1, df2, ncp, log)
+}
+<bytecode: 0x7fed411e7c10>
+<environment: namespace:stats>
+"
