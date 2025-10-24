@@ -4,14 +4,14 @@ output: html_notebook
 ---
 
 ```{r}
-read.csv("who_ambient_air_quality_database_version_2024_(v6.1) (1).csv")
+read.csv("~/Desktop/DPR PROJECT/who_ambient_air_quality_database_version_2024_(v6.1) (4).csv")
 ```
 
 ```{r}
 df
 ```
 ```{r}
-whoAQ_data <- read.csv("who_ambient_air_quality_database_version_2024_(v6.1) (1).csv") 
+whoAQ_data <- read.csv("~/Desktop/DPR PROJECT/who_ambient_air_quality_database_version_2024_(v6.1) (4).csv") 
 
   
 
@@ -97,25 +97,132 @@ data_clean <- whoAQ_data[, prop_missing <= 0.5]
  library(dplyr)
 library(tidyr)
 
-countries <- c("Sri Lanka","Germany","South Africa",
+countries <- c("India","Germany","South Africa",
                "United States of America","Brazil","Australia")
 
 df_sel <- whoAQ_data %>%
-  filter(country_name %in% countries) %>%
-  drop_na(pm25_concentration, pm10_concentration)
+  filter(country_name %in% countries)%>% 
+  drop_na(pm25_concentration, pm10_concentration,no2_concentration)
+
+```
+
+
+```{r}
+whoAQ_data <- df_sel %>%
+  select(-any_of(c("who_region", "iso3", "version", 
+                   "pm10_tempcov", "pm25_tempcov", "no2_tempcov",
+                   "type_of_stations", "reference", "web_link", 
+                   "population", "population_source", "who_ms")))
 
 ```
 
 
 
 ```{r}
-cleaned_data <- df_sel
+head(df_sel)
+```
+
+
+
+
+
+```{r}
+cleaned_data <- whoAQ_data
 
 ```
 
 
 ```{r}
 View(cleaned_data)
+
+```
+
+
+```{r}
+glimpse(cleaned_data)
+```
+
+```{r}
+head(cleaned_data)
+```
+
+
+
+
+
+```{r}
+library("skimr")
+```
+
+
+```{r}
+
+summary(cleaned_data %>% select(where(is.numeric)))
+skim(cleaned_data %>% select(where(is.numeric)))  
+
+```
+
+
+```{r}
+cleaned_data %>% summarise(
+  n_rows = n(),
+  n_countries = n_distinct(country_name),
+  n_cities = n_distinct(city),
+  n_years = n_distinct(year)
+)
+
+```
+
+```{r}
+
+country_summary <- cleaned_data %>%
+  group_by(country_name, continent) %>%
+  summarise(
+    n_obs = n(),
+    mean_pm25 = mean(pm25_concentration, na.rm=TRUE),
+    median_pm25 = median(pm25_concentration, na.rm=TRUE),
+    sd_pm25 = sd(pm25_concentration, na.rm=TRUE),
+    mean_no2 = mean(no2_concentration, na.rm=TRUE),
+    median_no2 = median(no2_concentration, na.rm=TRUE)
+  ) %>%
+  arrange(desc(mean_pm25))
+
+print(country_summary)
+
+
+```
+```{r}
+library(ggplot2)
+```
+
+
+
+```{r}
+
+ggplot(cleaned_data, aes(x = pm25_concentration)) +
+  geom_histogram(bins = 40, alpha = 0.6) +
+  labs(title = "Global PM2.5 Histogram", x = "PM2.5 (µg/m³)", y = "Count") 
+  
+
+
+
+```
+
+```{r}
+ggplot(cleaned_data, aes(x = pm25_concentration)) +
+  geom_density(fill = "red", alpha = 0.5) +
+  labs(title = "Global PM2.5 Density", x = "PM2.5 (µg/m³)") +
+  theme_minimal()
+```
+
+```{r}
+
+ggplot(cleaned_data, aes(x = reorder(country_name, pm25_concentration, FUN = median), y = pm25_concentration, fill = continent)) +
+  geom_violin(trim = FALSE, alpha = 0.6) +
+  geom_boxplot(width = 0.12, outlier.alpha = 0.3) +
+  coord_flip() +
+  labs(title = "PM2.5 Distribution by Country", x = "Country", y = "PM2.5 (µg/m³)") +
+  theme_minimal()
 
 ```
 
