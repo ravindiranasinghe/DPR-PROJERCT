@@ -173,6 +173,24 @@ cleaned_data %>% summarise(
 
 ```
 
+
+
+```{r}
+availability <- cleaned_data%>%
+  group_by(country_name) %>%
+  summarise(
+    n_obs = n(),
+    n_years = n_distinct(year),
+    n_cities = n_distinct(city),
+    first_year = min(year, na.rm=TRUE),
+    last_year  = max(year, na.rm=TRUE)
+  ) %>%
+  arrange(desc(n_obs))
+(availability)
+
+
+```
+
 ```{r}
 
 country_summary <- cleaned_data %>%
@@ -187,10 +205,14 @@ country_summary <- cleaned_data %>%
   ) %>%
   arrange(desc(mean_pm25))
 
-print(country_summary)
+(country_summary)
+
 
 
 ```
+
+
+
 ```{r}
 library(ggplot2)
 ```
@@ -208,21 +230,68 @@ ggplot(cleaned_data, aes(x = pm25_concentration)) +
 
 ```
 
-```{r}
-ggplot(cleaned_data, aes(x = pm25_concentration)) +
-  geom_density(fill = "red", alpha = 0.5) +
-  labs(title = "Global PM2.5 Density", x = "PM2.5 (µg/m³)") +
-  theme_minimal()
-```
 
 ```{r}
 
 ggplot(cleaned_data, aes(x = reorder(country_name, pm25_concentration, FUN = median), y = pm25_concentration, fill = continent)) +
-  geom_violin(trim = FALSE, alpha = 0.6) +
   geom_boxplot(width = 0.12, outlier.alpha = 0.3) +
   coord_flip() +
   labs(title = "PM2.5 Distribution by Country", x = "Country", y = "PM2.5 (µg/m³)") +
   theme_minimal()
+
+```
+
+
+```{r}
+
+outliers <- cleaned_data %>%
+  group_by(country_name) %>%
+  mutate(
+    Q1 = quantile(pm25_concentration, 0.25, na.rm=TRUE),
+    Q3 = quantile(pm25_concentration, 0.75, na.rm=TRUE),
+    IQR = Q3 - Q1,
+    lower = Q1 - 1.5 * IQR,
+    upper = Q3 + 1.5 * IQR,
+    is_outlier = (pm25_concentration < lower | pm25_concentration > upper)
+  ) %>%
+  filter(is_outlier) %>%
+  select(country_name, city, year, pm25_concentration, lower, upper)
+
+outliers %>% count(country_name, sort = TRUE)
+
+
+
+
+```
+
+
+
+
+```{r}
+
+ggplot(yearly, aes(x = year, y = mean_pm25)) +
+  geom_line() +
+  geom_point(size = 0.8) +
+  facet_wrap(~ country_name, scales = "free_y") +
+  labs(title = "Yearly PM2.5 Trends (faceted by country)") +
+  theme_minimal()
+
+
+
+```
+
+
+```{r}
+
+cleaned_data %>% filter(!is.na(no2_concentration)) %>%
+  ggplot(aes(x = no2_concentration, y = pm25_concentration, color = country_name)) +
+  geom_point(alpha = 0.02) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "PM2.5 vs NO2 (by country)") +
+  theme_minimal()
+  
+
+
 
 ```
 
