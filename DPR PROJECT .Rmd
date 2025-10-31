@@ -118,6 +118,10 @@ whoAQ_data <- df_sel %>%
 
 
 
+
+
+
+
 ```{r}
 head(df_sel)
 ```
@@ -268,12 +272,15 @@ outliers %>% count(country_name, sort = TRUE)
 
 
 ```{r}
+yearly <- cleaned_data %>%
+  group_by(country_name, year) %>%
+  summarise(mean_pm25_concentration = mean(pm25_concentration, na.rm = TRUE))
 
-ggplot(yearly, aes(x = year, y = mean_pm25)) +
+ggplot(yearly, aes(x = year, y = mean_pm25_concentration)) +
   geom_line() +
   geom_point(size = 0.8) +
   facet_wrap(~ country_name, scales = "free_y") +
-  labs(title = "Yearly PM2.5 Trends (faceted by country)") +
+  labs(title = "Yearly PM2.5 Trends (Faceted by Country)") +
   theme_minimal()
 
 
@@ -292,6 +299,64 @@ cleaned_data %>% filter(!is.na(no2_concentration)) %>%
   
 
 
+
+```
+
+
+
+
+
+# visualization part 
+
+```{r}
+df_viz <- cleaned_data %>% filter(year >= 2015 & year<= 2020 )
+
+```
+
+```{r}
+ggplot(df_viz, aes(x = continent, y = pm25_concentration, fill = continent)) +
+  geom_boxplot(outlier.alpha = 0.3) +
+  labs(title = "PM2.5 Concentration by Continent (2015-2020)",
+       y = "PM2.5 (µg/m³)", x = "continent") +
+  theme_minimal()
+
+```
+
+
+```{r}
+ggplot(df_viz, aes(y = reorder(country_name, pm25_concentration, FUN = median),
+                   x = pm25_concentration, fill = continent)) +
+  geom_boxplot(outlier.alpha = 0.3, width = 0.6) +
+  coord_flip() +
+  labs(title = "PM2.5 Concentration by Country (2015–2020)",
+       x = "Country", y = "PM2.5 (µg/m³)") +
+  theme_minimal()
+
+```
+
+```{r}
+df_viz %>%
+  group_by(year, country_name) %>%
+  summarise(mean_pm25 = mean(pm25_concentration, na.rm = TRUE)) %>%
+  ggplot(aes(x = year, y = mean_pm25, color = country_name)) +
+  geom_line(size = 1) +
+  geom_point(size = 1.5) +
+  labs(title = "Yearly Mean PM2.5 (2015–2020)",
+       y = "Mean PM2.5 (µg/m³)", x = "Year") +
+  theme_minimal()
+
+```
+
+```{r}
+df_viz %>%
+  group_by(year, country_name) %>%
+  summarise(mean_pm25_concentration = mean(pm25_concentration, na.rm = TRUE)) %>%
+  ggplot(aes(x = year, y = mean_pm25_concentration)) +
+  geom_line(color = "steelblue", size = 1) +
+  geom_point(color = "darkblue") +
+  facet_wrap(~ country_name, scales = "free_y") +
+  labs(title = "PM2.5 Trend per Country", y = "Mean PM2.5 (µg/m³)") +
+  theme_minimal()
 
 ```
 
