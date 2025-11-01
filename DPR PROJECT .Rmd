@@ -307,6 +307,35 @@ cleaned_data %>% filter(!is.na(no2_concentration)) %>%
 
 
 # visualization part 
+```{r}
+df_viz <- cleaned_data %>% filter(year >= 2010 & year<= 2015 )
+```
+
+```{r}
+ggplot(df_viz, aes(x = continent, y = pm25_concentration, fill = continent)) +
+  geom_boxplot(outlier.alpha = 0.8) +
+  labs(title = "PM2.5 Concentration by Continent (2010-2015)",
+       y = "PM2.5 (µg/m³)", x = "continent") +
+  theme_minimal()
+
+```
+
+```{r}
+ggplot(df_viz, aes(y = reorder(country_name, pm25_concentration, FUN = median),
+                   x = pm25_concentration, fill = continent)) +
+  geom_boxplot(outlier.alpha = 0.3, width = 0.6) +
+  coord_flip() +
+  labs(title = "PM2.5 Concentration by Country (2010–2015)",
+       x = "Country", y = "PM25 (µg/m³)") +
+  theme_minimal()
+
+```
+
+
+
+
+
+
 
 ```{r}
 df_viz <- cleaned_data %>% filter(year >= 2015 & year<= 2020 )
@@ -323,6 +352,11 @@ ggplot(df_viz, aes(x = continent, y = pm25_concentration, fill = continent)) +
 ```
 
 
+
+
+
+
+
 ```{r}
 ggplot(df_viz, aes(y = reorder(country_name, pm25_concentration, FUN = median),
                    x = pm25_concentration, fill = continent)) +
@@ -335,6 +369,30 @@ ggplot(df_viz, aes(y = reorder(country_name, pm25_concentration, FUN = median),
 ```
 
 ```{r}
+df_viz <- cleaned_data %>% filter(year >= 2010 & year<= 2015 )
+```
+
+
+
+```{r}
+df_viz %>%
+  group_by(year, country_name) %>%
+  summarise(mean_pm25 = mean(pm25_concentration, na.rm = TRUE)) %>%
+  ggplot(aes(x = year, y = mean_pm25, color = country_name)) +
+  geom_line(size = 1) +
+  geom_point(size = 1.5) +
+  labs(title = "Yearly Mean PM2.5 (2010–2015)",
+       y = "Mean PM2.5 (µg/m³)", x = "Year") +
+  theme_minimal()
+
+```
+
+
+```{r}
+df_viz <- cleaned_data %>% filter(year >= 2015 & year<= 2020 )
+```
+
+```{r}
 df_viz %>%
   group_by(year, country_name) %>%
   summarise(mean_pm25 = mean(pm25_concentration, na.rm = TRUE)) %>%
@@ -344,7 +402,10 @@ df_viz %>%
   labs(title = "Yearly Mean PM2.5 (2015–2020)",
        y = "Mean PM2.5 (µg/m³)", x = "Year") +
   theme_minimal()
+```
 
+```{r}
+df_viz <- cleaned_data %>% filter(year >= 2010 & year<= 2015 )
 ```
 
 ```{r}
@@ -357,6 +418,58 @@ df_viz %>%
   facet_wrap(~ country_name, scales = "free_y") +
   labs(title = "PM2.5 Trend per Country", y = "Mean PM2.5 (µg/m³)") +
   theme_minimal()
+```
+
+```{r}
+df_viz <- cleaned_data %>% filter(year >= 2015 & year<= 2020 )
+
+```
+
+
+
+```{r}
+df_viz %>%
+  group_by(year, country_name) %>%
+  summarise(mean_pm25_concentration = mean(pm25_concentration, na.rm = TRUE)) %>%
+  ggplot(aes(x = year, y = mean_pm25_concentration)) +
+  geom_line(color = "steelblue", size = 1) +
+  geom_point(color = "darkblue") +
+  facet_wrap(~ country_name, scales = "free_y") +
+  labs(title = "PM2.5 Trend per Country", y = "Mean PM2.5 (µg/m³)") +
+  theme_minimal()
+
+```
+
+
+```{r}
+df_viz %>%
+  filter(!is.na(no2_concentration)) %>%
+  ggplot(aes(x = no2_concentration, y = pm25_concentration, color = country_name)) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE, linetype = "dashed") +
+  labs(title = "Relationship between PM25 and NO2",
+       x = "NO2 (µg/m³)", y = "PM25 (µg/m³)") +
+  theme_minimal()
+
+```
+
+# Statistical Analysis
+
+
+
+```{r}
+install.packages("rstatix")
+```
+
+```{r}
+library(rstatix)
+
+```
+
+```{r}
+df_viz %>%
+  group_by(country_name) %>%
+  shapiro_test(pm25_concentration)
 
 ```
 
